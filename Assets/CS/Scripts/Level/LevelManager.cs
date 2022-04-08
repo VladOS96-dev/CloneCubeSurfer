@@ -34,8 +34,9 @@ namespace Level
             }
             CurrLevel = Instantiate(Levels.Levels[saveData.NumberLevel % Levels.Levels.Count], positionRespawn.position, positionRespawn.rotation);
             Player.pathCreator = CurrLevel.pathCreator;
+           
+            Player.GetComponent<Gameplay.CollectionBlock>().ClearBlocks(); 
             Player.ResetBeginPosition();
-            Player.GetComponent<Gameplay.CollectionBlock>().ClearBlocks();
         }
         public void IncreaseLevel()
         {

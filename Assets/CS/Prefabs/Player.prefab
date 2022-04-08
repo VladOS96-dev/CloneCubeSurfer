@@ -46,15 +46,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87f2ed24029f4c543b455df619eb9696, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 10
+  moveSpeed: 6
   sensivity: 50
-  border: 3
-  slideSpeed: 6
-  pressingForce: 0
-  IsPressing: 0
+  border: 3.5
+  slideSpeed: 10
   localLengthOfCentre: 0
+  FinalPoint: {fileID: 0}
   pathCreator: {fileID: 0}
   endOfPathInstruction: 2
+  distanceTravelled: 0
 --- !u!114 &2777418424751338727
 MonoBehaviour:
   m_ObjectHideFlags: 0

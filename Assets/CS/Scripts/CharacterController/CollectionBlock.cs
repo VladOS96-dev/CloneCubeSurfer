@@ -7,12 +7,19 @@ namespace Gameplay
     public class CollectionBlock : MonoBehaviour
     {
         public List<Transform> ListCollectBlocks;
-        public Vector3 BeginPosition { get; set; }
+        [SerializeField] private List<Transform> ListDisativeBlocks;
+        public Vector3 BeginPosition;//{ get; set; }
         [SerializeField] private Transform mainBlock;
         [SerializeField] private float sizeBlock;
         private PlayerController playerController;
+        private void Awake()
+        {
+              ListCollectBlocks = new List<Transform>();
+            ListDisativeBlocks = new List<Transform>();
+        }
         void Start()
         {
+          
             sizeBlock = mainBlock.GetComponent<MeshFilter>().mesh.bounds.size.y;
             playerController = GetComponent<PlayerController>();
             playerController.OnReset += ResetPosition;
@@ -23,6 +30,7 @@ namespace Gameplay
         }
         public void ResetPosition()
         {
+            transform.position = mainBlock.position;
             BeginPosition = mainBlock.localPosition;
 
         }
@@ -35,8 +43,14 @@ namespace Gameplay
                     Destroy(ListCollectBlocks[i].gameObject);
                 }
             }
+            foreach (var item in ListDisativeBlocks)
+            {
+                Destroy(item.gameObject);
+            }
+            ListDisativeBlocks.Clear();
             mainBlock.parent = transform;
             mainBlock.localPosition = Vector3.zero;
+          
             ListCollectBlocks.Clear();
             ListCollectBlocks.Add(mainBlock);
         }
@@ -44,7 +58,14 @@ namespace Gameplay
         {
    
             if (ListCollectBlocks.Count > 0)
-            {   
+            {
+                if (ListCollectBlocks.Count != 1)
+                {
+                    ListCollectBlocks[ListCollectBlocks.Count - 1].tag = "Untagged";
+                    ListCollectBlocks[ListCollectBlocks.Count - 1].parent = null;
+                    ListCollectBlocks[ListCollectBlocks.Count - 1].gameObject.AddComponent<Rigidbody>();
+                    Destroy(ListCollectBlocks[ListCollectBlocks.Count - 1].gameObject, 2f);
+                }
                 ListCollectBlocks.RemoveAt(ListCollectBlocks.Count - 1);
                 CheckLose();
             }
@@ -54,12 +75,22 @@ namespace Gameplay
         private void OnCollisionEnter(Collision collision)
         {
             if (collision.collider.CompareTag("Block"))
-            {
-
+            {  
+                if (transform.position != ListCollectBlocks[ListCollectBlocks.Count - 1].position)
+                {
+                    transform.position = ListCollectBlocks[ListCollectBlocks.Count - 1].position;
+                    for (int i = 0; i < ListCollectBlocks.Count; i++)
+                    {
+                        ListCollectBlocks[i].localPosition = new Vector3(ListCollectBlocks[i].localPosition.x,
+                            BeginPosition.y + (ListCollectBlocks.Count - 1 - i) * sizeBlock, ListCollectBlocks[i].localPosition.z);
+                    }
+                }
                 ListCollectBlocks.Add(collision.transform);
                 collision.transform.position = transform.position;
                 collision.transform.parent = transform;
+                collision.transform.rotation = Quaternion.identity;
                 collision.collider.tag = "Player";
+             
                 for(int i = 0; i< ListCollectBlocks.Count; i++) 
                 {
                     ListCollectBlocks[i].localPosition = new Vector3(ListCollectBlocks[i].localPosition.x,
@@ -67,18 +98,16 @@ namespace Gameplay
                 }
             }
             if (collision.collider.CompareTag("Obstacle"))
-            {
-              
+            {         
                 ListCollectBlocks.Remove(collision.contacts[0].thisCollider.transform);
-
-               
                 if(!CheckLose())
                 {
                     collision.contacts[0].thisCollider.transform.parent = null;
-
+                    ListDisativeBlocks.Add(collision.contacts[0].thisCollider.transform);
                 }
             }
         }
+     
         private bool CheckLose()
         {
             if (ListCollectBlocks.Count == 0)

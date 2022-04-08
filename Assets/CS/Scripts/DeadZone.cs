@@ -10,10 +10,6 @@ namespace Gameplay
             if (other.CompareTag("Player"))
             {
                 other.GetComponentInParent<CollectionBlock>().DestroyLastBlock();
-                other.tag = "Untagged";
-                other.transform.parent = null;
-                //other.gameObject.AddComponent<Rigidbody>();
-                //Destroy(other.gameObject,2f);
             }
            
         }

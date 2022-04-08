@@ -9,18 +9,15 @@ namespace Gameplay
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private float moveSpeed;
-        [SerializeField] private float sensivity;
         [SerializeField] private float border;
         [SerializeField] private float slideSpeed;
-        [SerializeField] private float localLengthOfCentre;
-        [HideInInspector]
-        public Transform FinalPoint;
+        private float localLengthOfCentre;
         [HideInInspector]
         public PathCreator pathCreator;
         public delegate void ResetData();
         public event ResetData OnReset;
         [SerializeField] private EndOfPathInstruction endOfPathInstruction;
-        [SerializeField]private float distanceTravelled;
+        private float distanceTravelled;
         private Rigidbody rb; 
         private Vector3 CenterPos;
         private bool isCanMove;
@@ -31,17 +28,18 @@ namespace Gameplay
         void Start()
         {           
             DragInput.OnDragPointer += SideMove;
-            localLengthOfCentre = 0;
             CenterPos = transform.position;
           
         }
          public void ResetBeginPosition()
         {
-            OnReset?.Invoke();
+          
             distanceTravelled = 0; 
             transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled, endOfPathInstruction);
             transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled, endOfPathInstruction);
+            localLengthOfCentre = 0;
             rb.isKinematic = false;
+            OnReset?.Invoke();
         }
         void Update()
         {         
@@ -58,7 +56,6 @@ namespace Gameplay
 
         private void Movement()
         {
-            //Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0, 0);
 
             if (!isCanMove)
                 return;
@@ -68,58 +65,33 @@ namespace Gameplay
                
                 UI.UiManager.Instance.ShowWin();
             }
-            //Vector3 newPos = transform.position;// +movement;
-            //newPos.x -= moveSpeed * Time.deltaTime;
-            //transform.position = newPos;
+
             if (pathCreator != null)
             {
                 distanceTravelled += moveSpeed * Time.deltaTime;
-                CenterPos = pathCreator.path.GetPointAtDistance(distanceTravelled, endOfPathInstruction);
-
+                Vector3 dir = pathCreator.path.GetPointAtDistance(distanceTravelled, endOfPathInstruction);
+                CenterPos = new Vector3(dir.x,transform.position.y,dir.z );
                 transform.rotation = Quaternion.Euler(0,
-                    pathCreator.path.GetRotationAtDistance(distanceTravelled, endOfPathInstruction).eulerAngles.y,
-                    0); 
-                //if (Input.GetAxis("Horizontal") > 0)
-                //{
-                //    transform.Translate(Vector3.right * slideSpeed * Time.deltaTime, Space.Self);
-                //}
-                //else
-                //{
-                //    transform.Translate(Vector3.left * slideSpeed * Time.deltaTime, Space.Self);
-                //}
-                //transform.Translate(Vector3.left * localLengthOfCentre * Time.deltaTime, Space.Self);
+                pathCreator.path.GetRotationAtDistance(distanceTravelled, endOfPathInstruction).eulerAngles.y,0);
+                transform.Translate(Vector3.right * localLengthOfCentre, Space.Self);
                 Vector3 newPos = transform.position;
                 Vector3 offset = newPos - CenterPos;
-
                 transform.position = CenterPos + Vector3.ClampMagnitude(offset, border);
             }
         }
     
         private void SideMove(Vector2 delta, Vector2 pos)
         {
-            //if (!isCanMove || IsFinish || IsFight)
-            //{
-            //    return;
-            //}
-            bool IsRight = false;
-            if (delta.x > 0)
+            if (!isCanMove)
             {
-                transform.Translate(Vector3.right * slideSpeed * Time.deltaTime, Space.Self);
-                IsRight = true;
-
-                localLengthOfCentre += slideSpeed * Time.deltaTime;
+                return;
             }
-            else
-            {
-                IsRight = false;
-                transform.Translate(Vector3.left * slideSpeed * Time.deltaTime, Space.Self);
-                localLengthOfCentre -= slideSpeed * Time.deltaTime;
-            }
-            Vector3 newPos = transform.position; /*+movement;*/
+            transform.Translate(Vector3.right *delta.x* slideSpeed * Time.deltaTime, Space.Self);
+            localLengthOfCentre += slideSpeed * delta.x * Time.deltaTime;
+            localLengthOfCentre = Mathf.Clamp(localLengthOfCentre,-border,border);
+            Vector3 newPos = transform.position;
             Vector3 offset = newPos - CenterPos;
             transform.position = CenterPos + Vector3.ClampMagnitude(offset, border);
-
-
         }
 
 
