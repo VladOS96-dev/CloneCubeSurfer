@@ -11,6 +11,7 @@ namespace Gameplay
         public Vector3 BeginPosition;//{ get; set; }
         [SerializeField] private Transform mainBlock;
         [SerializeField] private float sizeBlock;
+        [SerializeField] private LayerMask mask;
         private PlayerController playerController;
         private void Awake()
         {
@@ -88,23 +89,33 @@ namespace Gameplay
                 ListCollectBlocks.Add(collision.transform);
                 collision.transform.position = transform.position;
                 collision.transform.parent = transform;
-                collision.transform.rotation = Quaternion.identity;
+               
                 collision.collider.tag = "Player";
              
                 for(int i = 0; i< ListCollectBlocks.Count; i++) 
                 {
                     ListCollectBlocks[i].localPosition = new Vector3(ListCollectBlocks[i].localPosition.x,
                         BeginPosition.y +(ListCollectBlocks.Count-1-i) * sizeBlock, ListCollectBlocks[i].localPosition.z);
+                    ListCollectBlocks[i].localRotation = Quaternion.identity;
+
                 }
             }
             if (collision.collider.CompareTag("Obstacle"))
-            {         
-                ListCollectBlocks.Remove(collision.contacts[0].thisCollider.transform);
-                if(!CheckLose())
+            {
+
+                Collider[] collidersCenter = Physics.OverlapBox(collision.contacts[0].thisCollider.transform.position,
+                   new  Vector3(0.2f,0.2f,1.5f),transform.rotation,mask);
+                if (collidersCenter.Length > 0)
                 {
-                    collision.contacts[0].thisCollider.transform.parent = null;
-                    ListDisativeBlocks.Add(collision.contacts[0].thisCollider.transform);
+                    ListCollectBlocks.Remove(collision.contacts[0].thisCollider.transform);
+
+                    if (!CheckLose())
+                    {
+                        collision.contacts[0].thisCollider.transform.parent = null;
+                        ListDisativeBlocks.Add(collision.contacts[0].thisCollider.transform);
+                    }
                 }
+
             }
         }
      
