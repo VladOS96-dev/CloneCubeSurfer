@@ -675,8 +675,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2777418424751338727, guid: fa2406152223be545a9da8689496d6cf, type: 3}
+      propertyPath: firstBlock
+      value: 
+      objectReference: {fileID: 971430796}
+    - target: {fileID: 2777418424751338727, guid: fa2406152223be545a9da8689496d6cf, type: 3}
       propertyPath: mask.m_Bits
       value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 8987363627612982245, guid: fa2406152223be545a9da8689496d6cf, type: 3}
+      propertyPath: m_Name
+      value: FirstBlock
       objectReference: {fileID: 0}
     - target: {fileID: 8987363627612982245, guid: fa2406152223be545a9da8689496d6cf, type: 3}
       propertyPath: m_TagString
@@ -785,6 +793,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8274773809540932419, guid: 38851dea2e2efef428ec32a78012fb92, type: 3}
       propertyPath: Player
+      value: 
+      objectReference: {fileID: 1872697819}
+    - target: {fileID: 8274773809540932419, guid: 38851dea2e2efef428ec32a78012fb92, type: 3}
+      propertyPath: levels
+      value: 
+      objectReference: {fileID: 11400000, guid: f1fa819886812bc4390634bada661728, type: 2}
+    - target: {fileID: 8274773809540932419, guid: 38851dea2e2efef428ec32a78012fb92, type: 3}
+      propertyPath: player
       value: 
       objectReference: {fileID: 1872697819}
     - target: {fileID: 8274773809540932419, guid: 38851dea2e2efef428ec32a78012fb92, type: 3}

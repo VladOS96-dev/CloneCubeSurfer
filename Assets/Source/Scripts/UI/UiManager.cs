@@ -27,7 +27,9 @@ namespace UI
             ShowMenu();
             levelManager.NextLevel();
         }
-
+        /// <summary>
+        /// Функция включения окна меню
+        /// </summary>
         public void ShowMenu()
         {
             winScreen.HideWindow();
@@ -35,6 +37,9 @@ namespace UI
             inGameScreen.HideWindow();
             menuScreen.ShowWindow();
         }
+        /// <summary>
+        /// Функция включения окна меню
+        /// </summary>
         public void ShowLose()
         {
             winScreen.HideWindow();
@@ -42,6 +47,9 @@ namespace UI
             inGameScreen.HideWindow();
             menuScreen.HideWindow();
         }
+        /// <summary>
+        /// Функция включения окна меню
+        /// </summary>
         public void ShowWin()
         {
             winScreen.ShowWindow();
@@ -49,7 +57,9 @@ namespace UI
             inGameScreen.HideWindow();
             menuScreen.HideWindow();
         }
-
+        /// <summary>
+        /// Функция включения окна 
+        /// </summary>
         public void SnowInGame()
         {
             winScreen.HideWindow();

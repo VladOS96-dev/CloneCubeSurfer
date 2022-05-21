@@ -19,7 +19,7 @@ namespace Gameplay
         [SerializeField] private EndOfPathInstruction endOfPathInstruction;
         private float distanceTravelled;
         private Rigidbody rb; 
-        private Vector3 CenterPos;
+        private Vector3 centerPos;
         private bool isCanMove;
         private void Awake()
         {
@@ -28,9 +28,12 @@ namespace Gameplay
         void Start()
         {           
             DragInput.OnDragPointer += SideMove;
-            CenterPos = transform.position;
+            centerPos = transform.position;
           
         }
+        /// <summary>
+        /// Функция установки персонажа в начало пути
+        /// </summary>
          public void ResetBeginPosition()
         {
           
@@ -45,15 +48,20 @@ namespace Gameplay
         {         
             Movement();
         }
-        public void SetIsCanMove(bool status)
-        {
-            isCanMove = status;          
-        }
-        public void StopMove()
-        {
-            rb.isKinematic = true;
-        }
-
+        /// <summary>
+        /// Функция для разрешения/запрета движения персонажа 
+        /// </summary>
+        /// <param name="status">если true движение разрешено, false движение запрещено</param>
+        public void SetIsCanMove(bool status)=>  isCanMove = status;          
+        
+        /// <summary>
+        /// Функция останавливает движение персонажа
+        /// </summary>
+        public void StopMove()=> rb.isKinematic = true;
+        
+        /// <summary>
+        /// Функция движения персонажа по пути вперед
+        /// </summary>
         private void Movement()
         {
 
@@ -70,17 +78,20 @@ namespace Gameplay
             {
                 distanceTravelled += moveSpeed * Time.deltaTime;
                 Vector3 dir = pathCreator.path.GetPointAtDistance(distanceTravelled, endOfPathInstruction);
-                CenterPos = new Vector3(dir.x,transform.position.y,dir.z );
+                centerPos = new Vector3(dir.x,transform.position.y,dir.z );
                 transform.rotation = Quaternion.Euler(0,
                 pathCreator.path.GetRotationAtDistance(distanceTravelled, endOfPathInstruction).eulerAngles.y,0);
                 transform.Translate(Vector3.right * localLengthOfCentre, Space.Self);
                 Vector3 newPos = transform.position;
-                Vector3 offset = newPos - CenterPos;
-                transform.position = CenterPos + Vector3.ClampMagnitude(offset, border);
+                Vector3 offset = newPos - centerPos;
+                transform.position = centerPos + Vector3.ClampMagnitude(offset, border);
             }
         }
-    
-        private void SideMove(Vector2 delta, Vector2 pos)
+    /// <summary>
+    /// Функция движения персонажа в сторону
+    /// </summary>
+    /// <param name="delta"> направление в какую сторону двигать персонажа</param>
+        private void SideMove(Vector2 delta)
         {
             if (!isCanMove)
             {
@@ -90,8 +101,8 @@ namespace Gameplay
             localLengthOfCentre += slideSpeed * delta.x * Time.deltaTime;
             localLengthOfCentre = Mathf.Clamp(localLengthOfCentre,-border,border);
             Vector3 newPos = transform.position;
-            Vector3 offset = newPos - CenterPos;
-            transform.position = CenterPos + Vector3.ClampMagnitude(offset, border);
+            Vector3 offset = newPos - centerPos;
+            transform.position = centerPos + Vector3.ClampMagnitude(offset, border);
         }
 
 
